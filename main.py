@@ -10,6 +10,7 @@ class GitHubAnalyzer:
         """
         Inicializa o analisador com token de acesso do GitHub
         """
+
         self.token = token
         self.headers = {
             "Authorization": f"Bearer {token}",
@@ -21,6 +22,7 @@ class GitHubAnalyzer:
         """
         Cria a query GraphQL para buscar os repositórios mais populares
         """
+
         after_clause = f', after: "{cursor}"' if cursor else ""
         
         query = f"""
@@ -67,6 +69,7 @@ class GitHubAnalyzer:
         """
         Faz a requisição GraphQL para a API do GitHub
         """
+
         payload = {"query": query}
         
         try:
@@ -104,6 +107,7 @@ class GitHubAnalyzer:
         """
         Calcula a idade do repositório em dias
         """
+
         created_date = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
         current_date = datetime.now(created_date.tzinfo)
         return (current_date - created_date).days
@@ -112,6 +116,7 @@ class GitHubAnalyzer:
         """
         Calcula quantos dias desde a última atualização
         """
+
         updated_date = datetime.fromisoformat(updated_at.replace('Z', '+00:00'))
         current_date = datetime.now(updated_date.tzinfo)
         return (current_date - updated_date).days
@@ -120,6 +125,7 @@ class GitHubAnalyzer:
         """
         Calcula a razão de issues fechadas
         """
+
         if total_issues == 0:
             return 0.0
         return closed_issues / total_issues
@@ -128,6 +134,7 @@ class GitHubAnalyzer:
         """
         Processa os dados de um repositório individual
         """
+
         return {
             'name': repo['name'],
             'owner': repo['owner']['login'],
@@ -153,6 +160,7 @@ class GitHubAnalyzer:
         """
         Coleta dados dos repositórios mais populares
         """
+
         repositories = []
         cursor = None
         collected = 0
@@ -186,13 +194,11 @@ class GitHubAnalyzer:
                     print(f"Erro ao processar repositório {repo.get('name', 'Unknown')}: {e}")
                     continue
             
-            # Verifica se há mais páginas
             if not search_results['pageInfo']['hasNextPage'] or collected >= limit:
                 break
                 
             cursor = search_results['pageInfo']['endCursor']
             
-            # Rate limiting - pausa entre requisições
             time.sleep(3)
         
         print(f"Coleta finalizada. Total coletado: {len(repositories)} repositórios")
@@ -202,6 +208,7 @@ class GitHubAnalyzer:
         """
         Salva os dados dos repositórios em arquivo CSV
         """
+
         if not repositories:
             print("Nenhum dado para salvar")
             return
@@ -224,6 +231,7 @@ class GitHubAnalyzer:
         """
         Imprime um resumo dos dados coletados
         """
+
         if not repositories:
             return
         
@@ -233,7 +241,6 @@ class GitHubAnalyzer:
         
         print(f"Total de repositórios: {len(repositories)}")
         
-        # Estatísticas básicas
         ages = [repo['age_days'] for repo in repositories]
         stars = [repo['stars'] for repo in repositories]
         prs = [repo['merged_pull_requests'] for repo in repositories]
@@ -257,7 +264,6 @@ class GitHubAnalyzer:
         print(f"  Mediana: {sorted(releases)[len(releases)//2]:,}")
         print(f"  Máximo: {max(releases):,}")
         
-        # Linguagens mais populares
         languages = {}
         for repo in repositories:
             lang = repo['primary_language']
@@ -272,6 +278,7 @@ class GitHubAnalyzer:
         """
         Analisa métricas por linguagem (RQ07)
         """
+
         if not repositories:
             return
         
@@ -279,7 +286,6 @@ class GitHubAnalyzer:
         print("RQ07: ANÁLISE POR LINGUAGEM")
         print("="*60)
         
-        # Agrupa repositórios por linguagem
         by_language = {}
         for repo in repositories:
             lang = repo['primary_language']
@@ -287,13 +293,11 @@ class GitHubAnalyzer:
                 by_language[lang] = []
             by_language[lang].append(repo)
         
-        # Identifica linguagens populares dinamicamente (top 5 mais comuns)
         language_counts = {}
         for repo in repositories:
             lang = repo['primary_language']
             language_counts[lang] = language_counts.get(lang, 0) + 1
-        
-        # Ordena por frequência e pega as top 5
+
         sorted_lang_counts = sorted(language_counts.items(), key=lambda x: x[1], reverse=True)
         popular_languages = [lang for lang, count in sorted_lang_counts[:5]]
         
@@ -317,7 +321,6 @@ class GitHubAnalyzer:
         print("MÉTRICAS DETALHADAS POR LINGUAGEM:")
         print("-"*60)
         
-        # Análise detalhada para cada linguagem com pelo menos 2 repositórios
         for lang, repos in sorted_langs:
             if len(repos) >= 2:
                 prs = [r['merged_pull_requests'] for r in repos]
@@ -340,7 +343,6 @@ class GitHubAnalyzer:
                 print(f"    Média: {sum(updates)/len(updates):.1f}")
                 print(f"    Máximo: {max(updates)}")
         
-        # Comparação: Linguagens populares vs outras
         print(f"\n" + "="*60)
         print("COMPARAÇÃO: TOP 5 LINGUAGENS vs OUTRAS")
         print("="*60)
@@ -372,7 +374,6 @@ class GitHubAnalyzer:
         calculate_stats(popular_repos, "LINGUAGENS POPULARES")
         calculate_stats(other_repos, "OUTRAS LINGUAGENS")
         
-        # Análise comparativa
         if popular_repos and other_repos:
             popular_prs = [r['merged_pull_requests'] for r in popular_repos]
             other_prs = [r['merged_pull_requests'] for r in other_repos]
@@ -385,7 +386,6 @@ class GitHubAnalyzer:
             
             print(f"\n📈 CONCLUSÕES RQ07:")
             
-            # Pull Requests
             pop_pr_median = sorted(popular_prs)[len(popular_prs)//2]
             oth_pr_median = sorted(other_prs)[len(other_prs)//2]
             print(f"  PRs aceitas: Populares ({pop_pr_median:,}) vs Outras ({oth_pr_median:,})")
@@ -394,7 +394,6 @@ class GitHubAnalyzer:
             else:
                 print(f"    ❌ Linguagens populares NÃO recebem mais contribuições externas")
             
-            # Releases
             pop_rel_median = sorted(popular_releases)[len(popular_releases)//2]
             oth_rel_median = sorted(other_releases)[len(other_releases)//2]
             print(f"  Releases: Populares ({pop_rel_median}) vs Outras ({oth_rel_median})")
@@ -403,7 +402,6 @@ class GitHubAnalyzer:
             else:
                 print(f"    ❌ Linguagens populares NÃO lançam mais releases")
             
-            # Atualizações (menor é melhor)
             pop_upd_median = sorted(popular_updates)[len(popular_updates)//2]
             oth_upd_median = sorted(other_updates)[len(other_updates)//2]
             print(f"  Dias desde atualização: Populares ({pop_upd_median}) vs Outras ({oth_upd_median})")
@@ -417,6 +415,7 @@ def load_env_file():
     """
     Carrega variáveis de ambiente de um arquivo .env (opcional)
     """
+
     try:
         if os.path.exists('.env'):
             with open('.env', 'r', encoding='utf-8') as f:
@@ -426,17 +425,16 @@ def load_env_file():
                         key, value = line.split('=', 1)
                         os.environ[key.strip()] = value.strip()
     except Exception as e:
-        pass  # Se houver erro ao ler .env, continua sem ele
+        pass
 
 
 def main():
     """
     Função principal do programa
     """
-    # Carrega arquivo .env se existir
+
     load_env_file()
     
-    # Obtém o token do GitHub da variável de ambiente
     token = os.getenv('GITHUB_TOKEN')
     
     if not token:
