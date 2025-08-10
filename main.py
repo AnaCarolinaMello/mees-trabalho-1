@@ -25,7 +25,7 @@ class GitHubAnalyzer:
         
         query = f"""
         query {{
-            search(query: "stars:>5000", type: REPOSITORY, first: 20{after_clause}) {{
+            search(query: "stars:>1000", type: REPOSITORY, first: 20{after_clause}) {{
                 pageInfo {{
                     hasNextPage
                     endCursor
@@ -179,8 +179,8 @@ class GitHubAnalyzer:
                     repositories.append(processed_repo)
                     collected += 1
                     
-                    if collected % 10 == 0:
-                        print(f"Coletados {collected}/{limit} repositórios...")
+                    if collected % 20 == 0:
+                        print(f"Coletados {collected}/{limit} repositórios... ({(collected/limit)*100:.1f}%)")
                         
                 except Exception as e:
                     print(f"Erro ao processar repositório {repo.get('name', 'Unknown')}: {e}")
@@ -198,7 +198,7 @@ class GitHubAnalyzer:
         print(f"Coleta finalizada. Total coletado: {len(repositories)} repositórios")
         return repositories
     
-    def save_to_csv(self, repositories, filename="repositories_data.csv"):
+    def save_to_csv(self, repositories, filename="repositories_1000_data.csv"):
         """
         Salva os dados dos repositórios em arquivo CSV
         """
@@ -267,6 +267,150 @@ class GitHubAnalyzer:
         sorted_langs = sorted(languages.items(), key=lambda x: x[1], reverse=True)
         for lang, count in sorted_langs[:10]:
             print(f"  {lang}: {count} repositórios")
+    
+    def analyze_by_language(self, repositories):
+        """
+        Analisa métricas por linguagem (RQ07)
+        """
+        if not repositories:
+            return
+        
+        print("\n" + "="*60)
+        print("RQ07: ANÁLISE POR LINGUAGEM")
+        print("="*60)
+        
+        # Agrupa repositórios por linguagem
+        by_language = {}
+        for repo in repositories:
+            lang = repo['primary_language']
+            if lang not in by_language:
+                by_language[lang] = []
+            by_language[lang].append(repo)
+        
+        # Identifica linguagens populares dinamicamente (top 5 mais comuns)
+        language_counts = {}
+        for repo in repositories:
+            lang = repo['primary_language']
+            language_counts[lang] = language_counts.get(lang, 0) + 1
+        
+        # Ordena por frequência e pega as top 5
+        sorted_lang_counts = sorted(language_counts.items(), key=lambda x: x[1], reverse=True)
+        popular_languages = [lang for lang, count in sorted_lang_counts[:5]]
+        
+        print(f"\nRepositórios por linguagem:")
+        sorted_langs = sorted(by_language.items(), key=lambda x: len(x[1]), reverse=True)
+        for lang, repos in sorted_langs:
+            print(f"  {lang}: {len(repos)} repositórios")
+        
+        print(f"\n🏆 Linguagens POPULARES (Top 5 mais comuns):")
+        for i, lang in enumerate(popular_languages, 1):
+            count = language_counts[lang]
+            print(f"  {i}. {lang}: {count} repositórios")
+        
+        other_languages = [lang for lang in language_counts.keys() if lang not in popular_languages]
+        print(f"\n📦 Outras linguagens ({len(other_languages)} tipos):")
+        for lang in other_languages:
+            count = language_counts[lang]
+            print(f"  {lang}: {count} repositórios")
+        
+        print(f"\n" + "-"*60)
+        print("MÉTRICAS DETALHADAS POR LINGUAGEM:")
+        print("-"*60)
+        
+        # Análise detalhada para cada linguagem com pelo menos 2 repositórios
+        for lang, repos in sorted_langs:
+            if len(repos) >= 2:
+                prs = [r['merged_pull_requests'] for r in repos]
+                releases = [r['total_releases'] for r in repos]
+                updates = [r['days_since_update'] for r in repos]
+                
+                print(f"\n📊 {lang} ({len(repos)} repositórios):")
+                print(f"  Pull Requests aceitas:")
+                print(f"    Mediana: {sorted(prs)[len(prs)//2]:,}")
+                print(f"    Média: {sum(prs)/len(prs):.0f}")
+                print(f"    Máximo: {max(prs):,}")
+                
+                print(f"  Releases:")
+                print(f"    Mediana: {sorted(releases)[len(releases)//2]}")
+                print(f"    Média: {sum(releases)/len(releases):.1f}")
+                print(f"    Máximo: {max(releases)}")
+                
+                print(f"  Dias desde última atualização:")
+                print(f"    Mediana: {sorted(updates)[len(updates)//2]}")
+                print(f"    Média: {sum(updates)/len(updates):.1f}")
+                print(f"    Máximo: {max(updates)}")
+        
+        # Comparação: Linguagens populares vs outras
+        print(f"\n" + "="*60)
+        print("COMPARAÇÃO: TOP 5 LINGUAGENS vs OUTRAS")
+        print("="*60)
+        print(f"Top 5: {', '.join(popular_languages)}")
+        print(f"Outras: {len(other_languages)} linguagens diferentes")
+        
+        popular_repos = []
+        other_repos = []
+        
+        for repo in repositories:
+            if repo['primary_language'] in popular_languages:
+                popular_repos.append(repo)
+            else:
+                other_repos.append(repo)
+        
+        def calculate_stats(repos, label):
+            if not repos:
+                return
+            
+            prs = [r['merged_pull_requests'] for r in repos]
+            releases = [r['total_releases'] for r in repos]
+            updates = [r['days_since_update'] for r in repos]
+            
+            print(f"\n🔍 {label} ({len(repos)} repositórios):")
+            print(f"  Pull Requests aceitas - Mediana: {sorted(prs)[len(prs)//2]:,}")
+            print(f"  Releases - Mediana: {sorted(releases)[len(releases)//2]}")
+            print(f"  Dias desde atualização - Mediana: {sorted(updates)[len(updates)//2]}")
+        
+        calculate_stats(popular_repos, "LINGUAGENS POPULARES")
+        calculate_stats(other_repos, "OUTRAS LINGUAGENS")
+        
+        # Análise comparativa
+        if popular_repos and other_repos:
+            popular_prs = [r['merged_pull_requests'] for r in popular_repos]
+            other_prs = [r['merged_pull_requests'] for r in other_repos]
+            
+            popular_releases = [r['total_releases'] for r in popular_repos]
+            other_releases = [r['total_releases'] for r in other_repos]
+            
+            popular_updates = [r['days_since_update'] for r in popular_repos]
+            other_updates = [r['days_since_update'] for r in other_repos]
+            
+            print(f"\n📈 CONCLUSÕES RQ07:")
+            
+            # Pull Requests
+            pop_pr_median = sorted(popular_prs)[len(popular_prs)//2]
+            oth_pr_median = sorted(other_prs)[len(other_prs)//2]
+            print(f"  PRs aceitas: Populares ({pop_pr_median:,}) vs Outras ({oth_pr_median:,})")
+            if pop_pr_median > oth_pr_median:
+                print(f"    ✅ Linguagens populares recebem MAIS contribuições externas")
+            else:
+                print(f"    ❌ Linguagens populares NÃO recebem mais contribuições externas")
+            
+            # Releases
+            pop_rel_median = sorted(popular_releases)[len(popular_releases)//2]
+            oth_rel_median = sorted(other_releases)[len(other_releases)//2]
+            print(f"  Releases: Populares ({pop_rel_median}) vs Outras ({oth_rel_median})")
+            if pop_rel_median > oth_rel_median:
+                print(f"    ✅ Linguagens populares lançam MAIS releases")
+            else:
+                print(f"    ❌ Linguagens populares NÃO lançam mais releases")
+            
+            # Atualizações (menor é melhor)
+            pop_upd_median = sorted(popular_updates)[len(popular_updates)//2]
+            oth_upd_median = sorted(other_updates)[len(other_updates)//2]
+            print(f"  Dias desde atualização: Populares ({pop_upd_median}) vs Outras ({oth_upd_median})")
+            if pop_upd_median < oth_upd_median:
+                print(f"    ✅ Linguagens populares são atualizadas MAIS frequentemente")
+            else:
+                print(f"    ❌ Linguagens populares NÃO são atualizadas mais frequentemente")
 
 
 def load_env_file():
@@ -298,19 +442,17 @@ def main():
     if not token:
         print("ERRO: Token do GitHub não encontrado!")
         return
-    
-    # Inicializa o analisador
+
     analyzer = GitHubAnalyzer(token)
-    
-    # Coleta dados dos 100 repositórios mais populares
-    repositories = analyzer.collect_repositories_data(limit=100)
+
+    repositories = analyzer.collect_repositories_data(limit=1000)
     
     if repositories:
-        # Salva os dados em CSV
         analyzer.save_to_csv(repositories)
-        
-        # Mostra resumo
+ 
         analyzer.print_summary(repositories)
+
+        analyzer.analyze_by_language(repositories)
         
         print("\n" + "="*50)
         print("MÉTRICAS PARA AS QUESTÕES DE PESQUISA:")
