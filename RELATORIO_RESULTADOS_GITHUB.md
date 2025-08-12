@@ -30,6 +30,10 @@ Hipótese: Se espera que linguagens mais populares sejam mais acessíveis, levan
 Métrica: razão entre número de issues fechadas pelo total de issues.
 Hipótese: Se espera que sistemas mais populares têm um menor percentual de issues fechadas, isso porque a maior atenção leva a mais demandas por funcionalidades, e a maior visibilidade de bugs leva a mais bugs para serem tratados.
 
+**RQ 07. Sistemas escritos em linguagens mais populares recebem mais contribuição externa, lançam mais releases e são atualizados com mais frequência?**
+Métrica: comparação entre repositórios das Top 5 linguagens vs outras linguagens nas métricas de PRs aceitas, releases e frequência de atualização.
+Hipótese: Se espera que linguagens mais populares tenham melhor desempenho nessas métricas devido ao maior pool de desenvolvedores familiarizados com essas tecnologias.
+
 ---
 
 ## 2 - Metodologia
@@ -51,6 +55,9 @@ A seguinte hipótese é corroborada se houver mais de 3 linguagens com mais de 5
 
 **RQ 06. Os sistemas populares possuem um alto percentual de issues fechadas?**
 A seguinte hipótese é corroborada se 60% das issues foram fechadas.
+
+**RQ 07. Sistemas escritos em linguagens mais populares recebem mais contribuição externa, lançam mais releases e são atualizados com mais frequência?**
+A seguinte hipótese é corroborada se as Top 5 linguagens mais populares demonstrarem métricas superiores (mediana) em pelo menos 2 das 3 métricas comparadas: PRs aceitas, total de releases e frequência de atualização.
 
 ---
 
@@ -78,7 +85,7 @@ Este relatório apresenta os resultados da análise de 1.000 repositórios mais 
 
 ## 📊 DASHBOARD GERAL
 
-![Dashboard Resumo](dashboard_summary.png)
+![Dashboard Resumo](charts/dashboard_summary.png)
 
 _Figura 1: Dashboard com visão geral das principais métricas analisadas_
 
@@ -108,7 +115,7 @@ _Figura 1: Dashboard com visão geral das principais métricas analisadas_
 
 ### Visualizações
 
-![Idade dos Repositórios](chart_rq01_age.png)
+![Idade dos Repositórios](charts/chart_rq01_age.png)
 
 _Figura 2: Distribuição da idade dos repositórios e categorização por faixa etária_
 
@@ -150,7 +157,7 @@ _Figura 2: Distribuição da idade dos repositórios e categorização por faixa
 
 ### Visualizações
 
-![Contribuições](chart_rq02_contributions.png)
+![Contribuições](charts/chart_rq02_contributions.png)
 
 _Figura 3: Distribuição de pull requests e ranking dos repositórios com mais contribuições_
 
@@ -188,7 +195,7 @@ _Figura 3: Distribuição de pull requests e ranking dos repositórios com mais 
 
 ### Visualizações
 
-![Releases](chart_rq03_releases.png)
+![Releases](charts/chart_rq03_releases.png)
 
 _Figura 4: Distribuição de repositórios com/sem releases e histograma de frequência_
 
@@ -221,7 +228,7 @@ _Figura 4: Distribuição de repositórios com/sem releases e histograma de freq
 
 ### Visualizações
 
-![Atividade](chart_rq04_activity.png)
+![Atividade](charts/chart_rq04_activity.png)
 
 _Figura 5: Distribuição exata dos dias desde última atualização_
 
@@ -262,7 +269,7 @@ _Figura 5: Distribuição exata dos dias desde última atualização_
 
 ### Visualizações
 
-![Linguagens](chart_rq05_languages.png)
+![Linguagens](charts/chart_rq05_languages.png)
 
 _Figura 6: Ranking das linguagens mais populares e comparação Top 5 vs outras_
 
@@ -299,7 +306,7 @@ _Figura 6: Ranking das linguagens mais populares e comparação Top 5 vs outras_
 
 ### Visualizações
 
-![Resolução de Issues](chart_rq06_issues.png)
+![Resolução de Issues](charts/chart_rq06_issues.png)
 
 _Figura 7: Distribuição da taxa de resolução e categorização por eficiência_
 
@@ -334,7 +341,7 @@ _Figura 7: Distribuição da taxa de resolução e categorização por eficiênc
 
 ### Visualizações
 
-![Comparação Linguagens](chart_rq07_comparison.png)
+![Comparação Linguagens](charts/chart_rq07_comparison.png)
 
 _Figura 8: Comparação de métricas entre linguagens populares e outras linguagens_
 
@@ -432,6 +439,34 @@ _Figura 8: Comparação de métricas entre linguagens populares e outras linguag
 
 ---
 
+**RQ07 - Sistemas escritos em linguagens mais populares recebem mais contribuição externa, lançam mais releases e são atualizados com mais frequência?**
+
+**Hipótese:** Esperávamos que sistemas escritos em linguagens populares (Top 5: Python, TypeScript, JavaScript, Unknown, Go) tivessem melhor desempenho em métricas de desenvolvimento devido ao maior pool de desenvolvedores disponíveis.
+
+**Resultados obtidos:**
+
+**Comparação Linguagens Populares vs Outras:**
+
+| **Métrica**                          | **Linguagens Populares (Top 5)** | **Outras Linguagens** | **Diferença** |
+| ------------------------------------ | -------------------------------- | --------------------- | ------------- |
+| **PRs aceitas (mediana)**            | 714.5                            | 667.0                 | +7.1% melhor  |
+| **Total releases (mediana)**         | 41.0                             | 31.0                  | +32.3% melhor |
+| **Dias desde atualização (mediana)** | 0.0                              | 0.0                   | Empate        |
+| **Taxa resolução issues (mediana)**  | 86.5%                            | 84.4%                 | +2.5% melhor  |
+
+**Distribuição da amostra:**
+
+-   **Linguagens populares:** 650 repositórios (65.0%)
+-   **Outras linguagens:** 350 repositórios (35.0%)
+
+**Discussão:** A hipótese foi **parcialmente confirmada**. Linguagens populares demonstraram melhor desempenho em 3 das 4 métricas analisadas (75% de taxa de sucesso). A maior vantagem foi observada em **releases** (+32.3%), seguida por **contribuições externas** (+7.1%) e **resolução de issues** (+2.5%).
+
+Surpreendentemente, **não houve diferença na frequência de atualizações**, já que ambos os grupos mantêm atividade diária. Isso sugere que a pressão por manutenção ativa independe da linguagem quando se trata de repositórios populares.
+
+A vantagem em releases pode indicar que linguagens populares têm ecossistemas mais maduros de ferramentas de CI/CD e práticas de versionamento. O pequeno, mas consistente, aumento em contribuições externas sugere que a familiaridade com a linguagem realmente facilita a participação da comunidade.
+
+---
+
 ### Reflexões Gerais sobre as Hipóteses
 
 **Padrões Inesperados Descobertos:**
@@ -447,6 +482,7 @@ _Figura 8: Comparação de métricas entre linguagens populares e outras linguag
 **Hipóteses Mais Acertadas:**
 
 -   RQ01 (maturidade) e RQ05 (linguagens populares) foram as mais precisas
+-   RQ07 (linguagens populares vs outras) - confirmação parcial mas consistente
 
 **Hipóteses Mais Erradas:**
 
@@ -465,15 +501,15 @@ _Figura 8: Comparação de métricas entre linguagens populares e outras linguag
 
 ### Resumo por Research Question
 
-| **RQ**   | **Questão**                      | **Resultado**           | **Status**    |
-| -------- | -------------------------------- | ----------------------- | ------------- |
-| **RQ01** | Idade dos repositórios populares | 75.8% têm > 5 anos      | ✅ Confirmado |
-| **RQ02** | Contribuições externas           | Mediana: 682 PRs        | ✅ Confirmado |
-| **RQ03** | Frequência de releases           | 69.1% usam releases     | ✅ Confirmado |
-| **RQ04** | Frequência de atualizações       | 100% muito ativos       | ✅ Confirmado |
-| **RQ05** | Linguagens populares             | Python 18.7%, TS 15.6%  | ✅ Confirmado |
-| **RQ06** | Resolução de issues              | 76.3% taxa média        | ✅ Confirmado |
-| **RQ07** | Linguagens vs contribuições      | 75% métricas favoráveis | ✅ Confirmado |
+| **RQ**   | **Questão**                      | **Resultado**          | **Status**    |
+| -------- | -------------------------------- | ---------------------- | ------------- |
+| **RQ01** | Idade dos repositórios populares | 75.8% têm > 5 anos     | ✅ Confirmado |
+| **RQ02** | Contribuições externas           | Mediana: 682 PRs       | ✅ Confirmado |
+| **RQ03** | Frequência de releases           | 69.1% usam releases    | ✅ Confirmado |
+| **RQ04** | Frequência de atualizações       | 100% muito ativos      | ✅ Confirmado |
+| **RQ05** | Linguagens populares             | Python 18.7%, TS 15.6% | ✅ Confirmado |
+| **RQ06** | Resolução de issues              | 76.3% taxa média       | ✅ Confirmado |
+| **RQ07** | Linguagens populares vs outras   | 3/4 métricas melhores  | ✅ Confirmado |
 
 ### Características dos Repositórios Populares
 
@@ -523,15 +559,22 @@ _Figura 8: Comparação de métricas entre linguagens populares e outras linguag
 
 Este relatório inclui os seguintes arquivos de apoio:
 
-1. **dashboard_summary.png** - Dashboard geral com todas as métricas
-2. **chart_rq01_age.png** - Gráficos de idade dos repositórios
-3. **chart_rq02_contributions.png** - Análise de contribuições
-4. **chart_rq03_releases.png** - Estatísticas de releases
-5. **chart_rq04_activity.png** - Frequência de atualizações
-6. **chart_rq05_languages.png** - Distribuição de linguagens
-7. **chart_rq06_issues.png** - Resolução de issues
-8. **chart_rq07_comparison.png** - Comparação entre linguagens
-9. **repositories_1000_data.csv** - Dataset completo utilizado
+### Gráficos e Visualizações (pasta charts/)
+
+1. **charts/dashboard_summary.png** - Dashboard geral com todas as métricas
+2. **charts/chart_rq01_age.png** - Gráficos de idade dos repositórios
+3. **charts/chart_rq02_contributions.png** - Análise de contribuições
+4. **charts/chart_rq03_releases.png** - Estatísticas de releases
+5. **charts/chart_rq04_activity.png** - Frequência de atualizações
+6. **charts/chart_rq05_languages.png** - Distribuição de linguagens
+7. **charts/chart_rq06_issues.png** - Resolução de issues
+8. **charts/chart_rq07_comparison.png** - Comparação entre linguagens
+9. **charts/github_analysis_charts.png** - Gráficos compilados
+
+### Dados e Código
+
+10. **repositories_1000_data.csv** - Dataset completo utilizado
+11. **main.py** - Script de coleta e análise dos dados
 
 ---
 
