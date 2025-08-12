@@ -62,7 +62,7 @@ A seguinte hipótese é corroborada se 60% das issues foram fechadas.
 
 ---
 
-## RESUMO EXECUTIVO
+## 3 - RESUMO EXECUTIVO
 
 Este relatório apresenta os resultados da análise de 1.000 repositórios mais populares do GitHub, investigando 7 questões de pesquisa (RQ01-RQ07) sobre características, padrões de desenvolvimento e práticas de manutenção de projetos de software populares.
 
@@ -386,7 +386,7 @@ _Figura 8: Comparação de métricas entre linguagens populares e outras linguag
 -   Mediana geral: 35 releases
 -   Para repos com releases: mediana de 88 releases
 
-**Discussão:** A hipótese foi **parcialmente confirmada**. Entre os repositórios que utilizam releases, o número médio (88) superou significativamente nossa expectativa. Entretanto, descobrimos que 30.9% dos repositórios populares não fazem releases, principalmente repositórios de documentação, tutoriais e listas curadas. Isso nos ensinou que nem todos os projetos populares seguem práticas tradicionais de versionamento.
+**Discussão:** A hipótese foi **parcialmente confirmada**. Entre os repositórios que utilizam releases, o número médio (88) superou significativamente nossa expectativa. Porem, descobrimos que 30.9% dos repositórios populares não fazem releases, principalmente repositórios de documentação, tutoriais e listas curadas.
 
 ---
 
@@ -400,7 +400,7 @@ _Figura 8: Comparação de métricas entre linguagens populares e outras linguag
 -   Mediana: 0 dias desde última atualização
 -   Máximo: apenas 2 dias
 
-**Discussão:** A hipótese foi **dramaticamente superada**. Esperávamos atividade moderada (90 dias), mas encontramos atividade extrema (diária). Isso sugere que a popularidade cria um ciclo virtuoso onde a visibilidade pressiona por manutenção constante, e a manutenção ativa mantém/aumenta a popularidade.
+**Discussão:** A hipótese foi superada. Esperávamos atividade por volta de 90 dias, mas encontramos atividade diária. Isso sugere que a popularidade cria um ciclo virtuoso onde a visibilidade pressiona por manutenção constante, e a manutenção ativa mantém/aumenta a popularidade.
 
 ---
 
