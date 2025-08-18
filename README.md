@@ -1,7 +1,7 @@
 # Análise de Repositórios GitHub
 
 ## Descrição
-Script Python que utiliza GraphQL para coletar dados dos 100 repositórios mais populares do GitHub, coletando métricas necessárias para responder às questões de pesquisa sobre características de repositórios populares.
+Script Python que utiliza GraphQL para coletar dados dos 1000 repositórios mais populares do GitHub, coletando métricas necessárias para responder às questões de pesquisa sobre características de repositórios populares.
 
 ## Configuração
 

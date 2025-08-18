@@ -248,20 +248,24 @@ class GitHubAnalyzer:
         
         print(f"\nIdade dos repositórios:")
         print(f"  Mediana: {sorted(ages)[len(ages)//2]} dias")
+        print(f"  Média: {sum(ages)/len(ages):.1f} dias")
         print(f"  Mínima: {min(ages)} dias")
         print(f"  Máxima: {max(ages)} dias")
         
         print(f"\nEstrelas:")
         print(f"  Mediana: {sorted(stars)[len(stars)//2]:,}")
+        print(f"  Média: {sum(stars)/len(stars):.1f} dias")
         print(f"  Mínima: {min(stars):,}")
         print(f"  Máxima: {max(stars):,}")
         
         print(f"\nPull Requests aceitas:")
         print(f"  Mediana: {sorted(prs)[len(prs)//2]:,}")
+        print(f"  Média: {sum(prs)/len(prs):.1f}")
         print(f"  Máximo: {max(prs):,}")
         
         print(f"\nReleases:")
         print(f"  Mediana: {sorted(releases)[len(releases)//2]:,}")
+        print(f"  Média: {sum(releases)/len(releases):.1f}")
         print(f"  Máximo: {max(releases):,}")
         
         languages = {}
