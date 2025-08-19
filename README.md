@@ -1,7 +1,7 @@
 # Análise de Repositórios GitHub
 
 ## Descrição
-Script Python que utiliza GraphQL para coletar dados dos 1000 repositórios mais populares do GitHub, coletando métricas necessárias para responder às questões de pesquisa sobre características de repositórios populares.
+Script Python que utiliza GraphQL para coletar dados dos 1.000 repositórios mais populares do GitHub, coletando métricas necessárias para responder às questões de pesquisa sobre características de repositórios populares, incluindo análise por linguagem de programação (RQ07).
 
 ## Configuração
 
@@ -95,17 +95,25 @@ O script coleta as seguintes métricas para cada repositório:
 - **Campo**: `closed_issues_ratio`
 - **Descrição**: Razão entre issues fechadas e total de issues
 
+### RQ07 - Análise por Linguagem (Bônus)
+- **Campos**: `merged_pull_requests`, `total_releases`, `days_since_update` agrupados por `primary_language`
+- **Descrição**: Compara se linguagens mais populares (Top 5) recebem mais contribuições, lançam mais releases e são atualizadas mais frequentemente que outras linguagens
+- **Metodologia**: Identificação dinâmica das 5 linguagens mais comuns nos dados coletados
+- **Análise**: Comparação estatística entre linguagens populares vs. outras linguagens
+
+
 ## Saída
 
 O script gera:
-1. **Arquivo CSV**: `repositories_data.csv` com todos os dados coletados
-2. **Resumo no terminal**: Estatísticas básicas dos dados coletados
+1. **Arquivo CSV**: `repositories_1000_data.csv` com dados de 1.000 repositórios
+2. **Resumo no terminal**: Estatísticas básicas de todas as RQs (01-06)  
+3. **Análise RQ07**: Comparação detalhada por linguagem de programação
 
 ## Query GraphQL Utilizada
 
 ```graphql
 query {
-  search(query: "stars:>1", type: REPOSITORY, first: 100) {
+  search(query: "stars:>1000", type: REPOSITORY, first: 20) {
     pageInfo {
       hasNextPage
       endCursor
